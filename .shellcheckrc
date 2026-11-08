@@ -1,0 +1,5 @@
+# SC2015: A && B || C is intentional for log lines
+# SC2016: single-quoted text is written to rc files on purpose
+# SC2034: lib.sh variables are used by the scripts that source it
+disable=SC2015,SC2016,SC2034,SC1091
+external-sources=true

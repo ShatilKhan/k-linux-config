@@ -1,0 +1,12 @@
+# ~/.gitconfig  (written by scripts/70-git.sh; placeholders filled from the private lists)
+[user]
+	name = @PERSONAL_NAME@
+	email = @PERSONAL_EMAIL@
+[core]
+	sshCommand = ssh -i ~/.ssh/@PERSONAL_KEY@ -o IdentitiesOnly=yes
+	hooksPath = ~/.config/git/hooks
+[init]
+	defaultBranch = main
+[pull]
+	rebase = false
+@INCLUDES@

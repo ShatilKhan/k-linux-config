@@ -1,0 +1,6 @@
+# ~/.gitconfig-work  (written by scripts/70-git.sh)
+[user]
+	name = @WORK_NAME@
+	email = @WORK_EMAIL@
+[core]
+	sshCommand = ssh -i ~/.ssh/@WORK_KEY@ -o IdentitiesOnly=yes

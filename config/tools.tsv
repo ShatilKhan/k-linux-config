@@ -1,0 +1,55 @@
+name	command	version_cmd	rule	version	service
+git	git	git --version	>=	2.51	-
+curl	curl	curl --version	any	-	-
+jq	jq	jq --version	>=	1.7	-
+ripgrep	rg	rg --version	>=	14.0	-
+ffmpeg	ffmpeg	ffmpeg -version	any	-	-
+gcc	gcc	gcc --version	any	-	-
+make	make	make --version	any	-	-
+psql	psql	psql --version	>=	16	-
+mycli	mycli	mycli --version	any	-	-
+google-chrome	google-chrome	google-chrome --version	any	-	-
+brave	brave-browser	brave-browser --version	any	-	-
+firefox	firefox	firefox --version	any	-	-
+vscode	code	code --version	any	-	-
+vlc	vlc	vlc --version	any	-	-
+obs	obs	obs --version	any	-	-
+slack	slack	snap list slack	any	-	-
+obsidian	flatpak	flatpak info md.obsidian.Obsidian	any	-	-
+gh	gh	gh --version	>=	2.97.0	-
+infisical	infisical	infisical --version	any	-	-
+cloudflared	cloudflared	cloudflared --version	any	-	-
+nvidia-driver	nvidia-smi	nvidia-smi --query-gpu=driver_version --format=csv,noheader	>=	595.71	nvidia-persistenced
+bluetooth	bluetoothctl	bluetoothctl --version	any	-	bluetooth
+docker	docker	docker version --format '{{.Client.Version}}'	>=	29.5.1	docker
+containerd	containerd	containerd --version	any	-	containerd
+docker-compose	docker	docker compose version	any	-	-
+nvidia-ctk	nvidia-ctk	nvidia-ctk --version	>=	1.20.1	-
+docker-desktop	docker	dpkg-query -W -f '${Version}' docker-desktop	>=	4.86	-
+mise	mise	mise --version	>=	2026.11.0	-
+node	node	node --version	>=	26.0.0	-
+npm	npm	npm --version	>=	11.10	-
+bun	bun	bun --version	==	1.4.4	-
+python	python	python --version	>=	3.14	-
+uv	uv	uv --version	>=	0.11.15	-
+rustc	rustc	rustc --version	any	-	-
+cargo	cargo	cargo --version	any	-	-
+ctx7	ctx7	ctx7 --version	any	-	-
+posthog-cli	posthog-cli	posthog-cli --version	any	-	-
+cf	cf	cf --version	any	-	-
+firefox-devtools-mcp	firefox-devtools-mcp	echo 0.0.0	any	-	-
+lstk	lstk	lstk --version	any	-	-
+vercel	vercel	vercel --version	any	-	-
+cocoindex-code	ccc	ccc --help	any	-	-
+hf	hf	hf version	any	-	-
+d2	d2	d2 --version	any	-	-
+sentry-cli	sentry-cli	sentry-cli --version	any	-	-
+railway	railway	railway --version	any	-	-
+opencode	opencode	opencode --version	any	-	-
+aws	aws	aws --version	any	-	-
+dcg	dcg	dcg --version	any	-	-
+herdr	herdr	herdr --version	any	-	-
+ollama	ollama	ollama --version	>=	0.17.1	ollama
+xhisper	xhisper	echo 0.0.0	any	-	-
+claude	claude	claude --version	>=	2.1.163	-
+codex	codex	codex --version	>=	0.158.0	-

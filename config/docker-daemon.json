@@ -1,0 +1,5 @@
+{
+  "data-root": "/home/docker",
+  "log-driver": "local",
+  "features": { "containerd-snapshotter": true }
+}

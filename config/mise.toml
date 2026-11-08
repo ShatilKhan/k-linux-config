@@ -1,0 +1,24 @@
+# ~/.config/mise/config.toml  (installed by scripts/50-mise-tools.sh)
+# Global tool versions. `mise upgrade` updates everything except exact pins.
+
+[tools]
+node = "26"            # LTS line
+bun = "1.4.4"          # exact pin, same as the old machine
+python = "3.14"
+uv = "latest"
+rust = "stable"
+
+# Global CLIs
+"npm:ctx7" = "latest"
+"npm:@posthog/cli" = "latest"
+"npm:cf" = "latest"
+"npm:@mozilla/firefox-devtools-mcp" = "latest"
+"npm:@localstack/lstk" = "latest"
+"npm:vercel" = "latest"
+"pipx:cocoindex-code" = "latest"
+"pipx:huggingface_hub" = "latest"   # provides `hf`
+"github:terrastruct/d2" = "latest"
+"github:getsentry/sentry-cli" = "latest"
+"github:railwayapp/cli" = "latest"
+opencode = "latest"
+

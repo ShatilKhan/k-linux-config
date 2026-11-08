@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Block commits that contain any private term from ~/.config/k-migration/forbidden-words.txt.
+# The private list never lives in this repo. Enable with: git config core.hooksPath .githooks
+set -euo pipefail
+W="$HOME/.config/k-migration/forbidden-words.txt"
+[[ -f "$W" ]] || { echo "pre-commit: $W missing; refusing to commit without the private check" >&2; exit 1; }
+terms="$(grep -vE '^\s*(#|$)' "$W" || true)"
+[[ -n "$terms" ]] || exit 0
+hits="$(git diff --cached -U0 --no-color | grep '^+' | grep -iFf <(printf '%s\n' "$terms") || true)"
+files="$(git diff --cached --name-only | grep -iFf <(printf '%s\n' "$terms") || true)"
+if [[ -n "$hits$files" ]]; then
+  echo "pre-commit: private terms found in staged changes. Commit blocked." >&2
+  echo "$files" | sed '/^$/d; s/^/  file: /' >&2
+  echo "$hits" | sed '/^$/d' | cut -c1-120 | sed 's/^/  line: /' >&2
+  exit 1
+fi

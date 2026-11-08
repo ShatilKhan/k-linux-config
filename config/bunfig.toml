@@ -1,0 +1,4 @@
+# ~/.bunfig.toml  (installed by scripts/50-mise-tools.sh)
+[install]
+# Skip package versions younger than 7 days (seconds).
+minimumReleaseAge = 604800

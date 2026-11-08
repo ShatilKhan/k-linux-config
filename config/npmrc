@@ -1,0 +1,4 @@
+# ~/.npmrc  (installed by scripts/50-mise-tools.sh)
+# Supply-chain protection: no install scripts, skip versions younger than 7 days.
+ignore-scripts=true
+min-release-age=7
