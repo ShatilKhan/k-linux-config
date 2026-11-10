@@ -47,7 +47,12 @@
 - gh tokens are in the system keyring, so copying `hosts.yml` does not move them. Log in again on each new machine.
 
 ## MCP servers
-- The one-login-for-all-servers method is claude.ai connectors. They go with the Claude account to every machine.
+- Executor (local CLI mode, `scripts/65-executor.sh`) is the one login for many services. You connect each account once in its dashboard. Agents use one MCP endpoint (`http://127.0.0.1:4312/mcp`) and never see the credentials.
+  - Its keys are in the GNOME keyring, so the Executor setup is redone on each machine, not copied.
+  - The existing MCP entries stay until each service works through Executor. Then the old entry is removed, so no tool appears twice.
+  - Slack stays on the Slack plugin, because Executor does not support Slack's own MCP server. Two Slack workspaces may need one Slack MCP entry per project folder.
+  - Executor's support for the OAuth flow of remote MCP servers (custom app by URL) is not confirmed in its docs. Test each service before removing its old entry.
+- claude.ai connectors also go with the Claude account to every machine.
 - Local stdio servers and CLIs need one login on each machine.
 - IBM ContextForge was evaluated and not used. You must run and patch your own server. It had several CVEs in 2026. It still needs one login for each upstream service.
 - Playwright is not installed globally (an old bundled Chromium had CVEs). Projects that need it install it as a dev dependency.

@@ -48,7 +48,9 @@ railway	railway	railway --version	any	-	-
 opencode	opencode	opencode --version	any	-	-
 aws	aws	aws --version	any	-	-
 dcg	dcg	dcg --version	any	-	-
-herdr	herdr	herdr --version	any	-	-
+herdr	herdr	herdr --version	>=	0.9.5	-
+herdsman	herdsman	herdsman version	any	-	-
+executor	executor	executor --version	any	-	-
 ollama	ollama	ollama --version	>=	0.17.1	ollama
 xhisper	xhisper	echo 0.0.0	any	-	-
 claude	claude	claude --version	>=	2.1.163	-

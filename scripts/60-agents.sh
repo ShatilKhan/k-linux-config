@@ -33,8 +33,19 @@ fi
 # 5. Plugins: the copied ~/.claude/plugins holds marketplaces and cache; refresh them.
 command -v claude >/dev/null && run claude plugin marketplace update || warn "plugin marketplace update failed; run it inside Claude: /plugin"
 
+# 6. herdsman skill (the binary comes from mise). The skill must match the binary's release.
+HS_VER="$(herdsman version 2>/dev/null | grep -oE 'v?[0-9]+(\.[0-9]+)+' | head -1 || true)"
+if [[ ! -d "$HOME/.claude/skills/herdsman" ]]; then
+  if gh auth status >/dev/null 2>&1 && [[ -n "$HS_VER" ]]; then
+    run gh skill install arafathusayn/herdsman herdsman --agent claude-code --scope user --pin "v${HS_VER#v}"
+  else
+    echo "LOGIN-NEEDED herdsman skill (after 70-git.sh): gh skill install arafathusayn/herdsman herdsman --agent claude-code --scope user --pin v<herdsman version>"
+  fi
+fi
+
 # Checks
-((CHECK_ONLY)) || verify_rows claude codex opencode dcg herdr
+((CHECK_ONLY)) || verify_rows claude codex opencode dcg herdr herdsman
+((CHECK_ONLY)) || herdsman doctor || warn "herdsman doctor reported problems (gh login or herdr session may be missing)"
 if [[ -f "$HOME/.claude/settings.json" ]]; then
   miss=0
   while read -r p; do
@@ -43,4 +54,4 @@ if [[ -f "$HOME/.claude/settings.json" ]]; then
   done < <(jq -r '.enabledPlugins // {} | to_entries[] | select(.value) | .key' "$HOME/.claude/settings.json")
   ((miss)) && warn "install missing plugins inside Claude with /plugin" || log "all enabled plugins present"
 fi
-log "Next: scripts/70-git.sh"
+log "Next: scripts/65-executor.sh"

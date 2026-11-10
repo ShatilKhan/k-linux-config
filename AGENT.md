@@ -30,6 +30,9 @@ and cloned this repo to `~/k-linux-config`.
 - CLI logins: `railway login`, `vercel login`, `aws configure sso` or `aws configure`,
   `codex login`, `infisical login`, `sentry-cli login`.
 - MCP servers that show LOGIN-NEEDED: run `/mcp` in Claude Code and log in.
+- After `65-executor.sh`: the owner connects accounts in the Executor dashboard (`executor`).
+  Remove an old MCP entry only after the owner confirms that service works through Executor.
+- After `70-git.sh`: install the herdsman skill if `60-agents.sh` printed LOGIN-NEEDED for it.
 
 ## Finish
 

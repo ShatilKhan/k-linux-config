@@ -20,7 +20,8 @@ This repo contains no private data. Private lists live in `~/.config/k-migration
 | 6 | `scripts/35-net-check.sh` | Checks Wi-Fi and Bluetooth, and can hold a good kernel. |
 | 7 | `scripts/40-docker.sh` | Installs Docker Engine and Docker Desktop, with data on `/home`. |
 | 8 | `scripts/50-mise-tools.sh` | Installs runtimes and CLIs with mise, plus aws, Ollama, and xhisper. |
-| 9 | `scripts/60-agents.sh` | Installs Claude Code, Codex CLI, and opencode, and cleans up skills. |
+| 9 | `scripts/60-agents.sh` | Installs Claude Code, Codex CLI, and opencode, adds the herdsman skill, and cleans up skills. |
+| 9b | `scripts/65-executor.sh` | Installs Executor (one MCP endpoint for many accounts) and registers it with Claude Code and Codex. |
 | 10 | `scripts/70-git.sh` | Sets up the personal and work Git identities by folder. |
 | 11 | `scripts/90-verify.sh` | Checks everything and writes `~/verify-report.md`. |
 

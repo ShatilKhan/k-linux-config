@@ -21,4 +21,6 @@ rust = "stable"
 "github:getsentry/sentry-cli" = "latest"
 "github:railwayapp/cli" = "latest"
 opencode = "latest"
+herdr = "latest"                          # agent terminal workspace
+"github:arafathusayn/herdsman" = "latest"  # agent-team orchestrator on top of herdr; keep its skill on the same release
 
