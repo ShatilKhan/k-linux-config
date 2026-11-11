@@ -26,18 +26,33 @@ In the installer, select **Manual partitioning**. Use the new disk only.
   so the username and folder layout must stay the same.
 - Turn off Secure Boot only if the NVIDIA driver fails to load.
 
-## 4. Get this repo and start Claude Code
+## 4. Run the bootstrap (one line)
+
+Open a terminal on the new system and paste:
 
 ```bash
-sudo apt update && sudo apt install -y git curl
+curl -fsSL https://raw.githubusercontent.com/ShatilKhan/k-linux-config/main/bootstrap.sh | bash
+```
+
+It asks for your sudo password, then:
+1. installs git, curl, and rsync, and clones this repo to `~/k-linux-config`;
+2. runs the preflight (`--fix-swap`), the data copy, and the permission fix;
+3. installs Claude Code and starts it.
+
+Log in to Claude. It continues from `AGENT.md` and asks you to run each sudo step in a terminal.
+The copy runs before Claude Code first starts, so Claude finds its old memories and sessions.
+
+Dry run first, which changes nothing: `curl -fsSL <same URL> | bash -s -- --check`
+
+## Manual fallback
+
+```bash
+sudo apt update && sudo apt install -y git curl rsync
 git clone https://github.com/ShatilKhan/k-linux-config ~/k-linux-config
 cd ~/k-linux-config
 scripts/00-preflight.sh --fix-swap
-scripts/10-migrate.sh          # copies data, including ~/.claude (memories and sessions)
+scripts/10-migrate.sh
 scripts/15-secure.sh
 curl -fsSL https://claude.ai/install.sh | bash
 claude                         # log in, then: "Follow AGENT.md"
 ```
-
-Run the copy (`10-migrate.sh`) before the first Claude Code start.
-Claude Code then finds its old memories and sessions on its first run.

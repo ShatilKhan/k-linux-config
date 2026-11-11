@@ -64,4 +64,5 @@ fi
 if ((!CHECK_ONLY)); then
   systemctl show ollama -p Environment | grep -q "OLLAMA_MODELS=$HOME/dev/models" || die "ollama models path not set"
 fi
+mark_done
 log "Next: scripts/60-agents.sh"

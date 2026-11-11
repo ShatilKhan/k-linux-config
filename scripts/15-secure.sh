@@ -23,4 +23,5 @@ done
   [[ "$(stat -c %a "$f")" == 600 ]] || die "$f is not mode 600"
 done < <(find "$HOME/.ssh" -maxdepth 1 -type f ! -name '*.pub' -print0 2>/dev/null)
 log "permissions OK"
+mark_done
 log "done. Next: scripts/20-apps.sh"

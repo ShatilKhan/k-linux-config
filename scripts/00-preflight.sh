@@ -21,4 +21,5 @@ curl -fsS -o /dev/null https://github.com && log "internet OK" || { warn "no int
 dev="$(find_old_home || true)"
 [[ -n "$dev" ]] && log "old home partition found: $dev" || { warn "old home partition not found (needed by 10-migrate.sh)"; rc=1; }
 ((rc == 0)) || die "preflight failed"
+mark_done
 log "preflight PASS. Next: scripts/10-migrate.sh"

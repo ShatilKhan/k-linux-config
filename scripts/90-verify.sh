@@ -116,4 +116,5 @@ else
 fi
 ((tools_ok)) && report "Tools and MCP: all PASS." || report "Tools or MCP: some rows FAIL (see above)."
 log "report: $REPORT"
-((copy_ok && tools_ok))
+((copy_ok && tools_ok)) || exit 1
+mark_done

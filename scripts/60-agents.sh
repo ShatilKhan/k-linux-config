@@ -63,4 +63,5 @@ if ((!CHECK_ONLY)); then
     warn "herdsman skill not installed yet (needs gh login; see LOGIN-NEEDED above)"
   log "skills: $(count "$HOME/.claude/skills" -mindepth 1 -maxdepth 1) in ~/.claude/skills, $(count "$HOME/.agents/skills" -mindepth 1 -maxdepth 1) in ~/.agents/skills"
 fi
+mark_done
 log "Next: scripts/65-executor.sh"

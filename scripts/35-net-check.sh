@@ -32,4 +32,5 @@ If any test fails, reboot into the previous kernel (GRUB > Advanced options),
 repeat the test, and if it passes run: scripts/35-net-check.sh --hold
 TXT
 ((rc == 0)) || die "network checks failed"
+mark_done
 log "Next: scripts/40-docker.sh"

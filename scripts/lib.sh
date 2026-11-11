@@ -8,6 +8,19 @@ REPORT="${VERIFY_REPORT:-$HOME/verify-report.md}"
 CHECK_ONLY=0
 for a in "$@"; do [[ "$a" == "--check" ]] && CHECK_ONLY=1; done
 
+# Every run is also written to ~/.local/state/k-setup/<script>.log, so an agent can read
+# the result of a script the owner ran in another terminal.
+STATE_DIR="$HOME/.local/state/k-setup"
+mkdir -p "$STATE_DIR"
+exec > >(tee -a "$STATE_DIR/$(basename "$0" .sh).log") 2>&1
+
+# mark_done: record that this script finished with all checks passing (not in --check mode).
+mark_done() {
+  ((CHECK_ONLY)) && return 0
+  date -Is >"$STATE_DIR/$(basename "$0" .sh).done"
+  log "PASS: marked done in $STATE_DIR"
+}
+
 log()  { printf '\033[1m[%s]\033[0m %s\n' "$(basename "$0" .sh)" "$*"; }
 warn() { printf '\033[33m[%s] WARN:\033[0m %s\n' "$(basename "$0" .sh)" "$*" >&2; }
 die()  { printf '\033[31m[%s] FAIL:\033[0m %s\n' "$(basename "$0" .sh)" "$*" >&2; exit 1; }

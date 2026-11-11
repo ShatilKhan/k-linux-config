@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(scripts/*)",
+      "Bash(./scripts/*)",
+      "Read(~/.local/state/k-setup/**)",
+      "Read(~/verify-report.md)",
+      "Read(~/migrate-leftovers.txt)"
+    ]
+  }
+}

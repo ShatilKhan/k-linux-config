@@ -57,4 +57,5 @@ parents="$(comm -23 \
   done
 } >"$LEFT"
 log "leftover report: $LEFT ($(($(wc -l <"$LEFT") - 2)) entries)"
+mark_done
 log "done. Next: scripts/15-secure.sh"

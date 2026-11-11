@@ -110,4 +110,5 @@ Manual installs (vendor .deb files; each adds its own apt repo or updates itself
   - ChatGPT/Codex desktop app: https://chatgpt.com/download   sudo apt install ./<file>.deb
   - Hubstaff:        https://app.hubstaff.com/download   (Linux installer; updates from the tray menu)
 EOF
+mark_done
 log "done. Next: scripts/30-gpu.sh"

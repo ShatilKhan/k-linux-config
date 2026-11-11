@@ -52,4 +52,5 @@ grep -q 'PreserveVideoMemoryAllocations: 1' /proc/driver/nvidia/params || { warn
 [[ "$(gsettings get org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type)" == "'nothing'" ]] || { warn "GNOME auto-suspend (AC) still on"; rc=1; }
 systemd-analyze cat-config systemd/logind.conf 2>/dev/null | grep -q '^HandleLidSwitch=lock' || { warn "logind lid setting not loaded"; rc=1; }
 ((rc == 0)) && log "GPU and power checks PASS" || die "GPU and power checks failed (see above)"
+mark_done
 log "Next: scripts/35-net-check.sh"

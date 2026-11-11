@@ -92,4 +92,5 @@ Next steps for you:
        scripts/40-docker.sh --desktop-settings
   3. Do not run Engine containers and Desktop containers on the same ports at once.
 TXT
+mark_done
 log "Next: scripts/50-mise-tools.sh"

@@ -12,6 +12,7 @@ This repo contains no private data. Private lists live in `~/.config/k-migration
 | Step | Script | What it does |
 |---|---|---|
 | 0 | `docs/install.md` | You install Ubuntu by hand: EFI, `/`, `/home` on separate partitions, user `k`. |
+| 0b | `bootstrap.sh` | One pasted line: runs steps 1 to 3, installs Claude Code, and starts it to do the rest. |
 | 1 | `scripts/00-preflight.sh` | Checks the OS, user, partitions, swap, and network. `--fix-swap` sets swap to 16G. |
 | 2 | `scripts/10-migrate.sh` | Mounts the old `/home` read-only and copies the paths in the private copy list. |
 | 3 | `scripts/15-secure.sh` | Sets permissions on keys and agent state. |
@@ -26,6 +27,8 @@ This repo contains no private data. Private lists live in `~/.config/k-migration
 | 11 | `scripts/90-verify.sh` | Checks everything and writes `~/verify-report.md`. |
 
 Each script:
+
+- writes its output to `~/.local/state/k-setup/<script>.log` and, when all checks pass, a `<script>.done` file;
 
 - can run again safely;
 - has a `--check` mode that only reports;

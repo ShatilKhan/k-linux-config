@@ -73,4 +73,5 @@ if [[ -n "$r" ]]; then
 fi
 [[ "$(git -C "$HOME" config user.email 2>/dev/null || git config --global user.email)" == "$PERSONAL_EMAIL" ]] || { warn "personal identity is not the default"; rc=1; }
 ((rc == 0)) || die "git checks failed"
+mark_done
 log "git identities PASS. Next: scripts/90-verify.sh"

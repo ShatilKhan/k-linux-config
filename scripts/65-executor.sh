@@ -64,4 +64,5 @@ Next steps for you:
   2. In Claude Code run /mcp and sign in to "executor".
   3. When a service works through Executor, remove its old MCP entry to avoid duplicate tools.
 TXT
+mark_done
 log "Next: scripts/70-git.sh"
