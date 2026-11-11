@@ -79,16 +79,16 @@ verify_rows docker containerd docker-compose nvidia-ctk docker-desktop || rc=1
 [[ "$(sudo docker info -f '{{.DockerRootDir}}')" == /home/docker ]] || { warn "Engine data-root is not /home/docker"; rc=1; }
 [[ "$(findmnt -rno SOURCE /var/lib/containerd)" == *"/home/containerd"* || "$(findmnt -rno SOURCE /var/lib/containerd)" == *"[/containerd]"* ]] ||
   { warn "/var/lib/containerd is not bind-mounted from /home/containerd"; rc=1; }
-sudo docker run --rm --gpus all ubuntu nvidia-smi -L | grep -q 'RTX 3050' || { warn "GPU not visible in containers"; rc=1; }
+sudo docker run --rm --gpus all ubuntu nvidia-smi -L | matches 'RTX 3050' || { warn "GPU not visible in containers"; rc=1; }
 cid="$(sudo docker run -d --rm -e POSTGRES_PASSWORD=verify postgres:16-alpine)"
 for _ in $(seq 20); do sudo docker exec "$cid" pg_isready -q -U postgres 2>/dev/null && break; sleep 1; done
-sudo docker exec "$cid" psql -U postgres -tAc 'select 1' | grep -q 1 || { warn "PostgreSQL test container failed"; rc=1; }
+sudo docker exec "$cid" psql -U postgres -tAc 'select 1' | matches 1 || { warn "PostgreSQL test container failed"; rc=1; }
 sudo docker stop "$cid" >/dev/null
 ((rc == 0)) || die "Docker checks failed"
 
 cat <<'TXT'
 Next steps for you:
-  1. Log out and back in (docker and kvm groups).
+  1. Reboot, so the docker and kvm groups apply. A quick log-out can keep the old groups.
   2. Start Docker Desktop once from the app menu, accept the terms, then run:
        scripts/40-docker.sh --desktop-settings
   3. Do not run Engine containers and Desktop containers on the same ports at once.

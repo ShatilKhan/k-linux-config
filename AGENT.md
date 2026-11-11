@@ -44,16 +44,19 @@ and `15-secure` before starting you.
    The pre-commit hook blocks them. Do not bypass it.
 7. Never format, repartition, or write to the old disk. The scripts mount it read-only.
 8. Logins need the owner. When a check says LOGIN-NEEDED, give the owner the exact command.
-9. A reboot or log-out is needed after `30-gpu.sh` and after `40-docker.sh`. Tell the owner to
+9. A reboot is needed after `30-gpu.sh` and after `40-docker.sh`. Tell the owner to
    do it, then to run `claude --continue` in `~/k-linux-config`. Then start again at "Where to start".
 
 ## Steps that need the owner
 
 - After `30-gpu.sh`: reboot. Then run `scripts/30-gpu.sh --check`.
 - After `35-net-check.sh`: the owner does the manual test list in its output.
-- After `40-docker.sh`: log out and in. Start Docker Desktop once. Then run
+- After `40-docker.sh`: reboot (a quick log-out can keep the old groups: GNOME reuses the running systemd user manager). Start Docker Desktop once. Then run
   `scripts/40-docker.sh --desktop-settings`.
-- `20-apps.sh` prints three manual app installs (Claude Desktop, ChatGPT/Codex app, Hubstaff).
+- `20-apps.sh` installs Claude Desktop and the ChatGPT/Codex app from their vendor apt repos. It
+  prints one manual install: Hubstaff. You can run that one yourself (per-user, no sudo).
+  Then register its icons: copy `~/Hubstaff/resources/hicolor/*x*` to `~/.local/share/icons/hicolor/`
+  and set `Icon=hubstaff-color` in `~/.local/share/applications/netsoft-com.netsoft.hubstaff.desktop`.
 - `70-git.sh` prints `gh auth login` commands, one per GitHub account.
 - CLI logins: `railway login`, `vercel login`, `aws configure sso` or `aws configure`,
   `codex login`, `infisical login`, `sentry-cli login`.

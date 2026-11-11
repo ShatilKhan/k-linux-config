@@ -68,6 +68,38 @@ sudo_write /etc/apt/preferences.d/mozilla "Package: *
 Pin: origin packages.mozilla.org
 Pin-Priority: 1000"
 
+# fpr_check <keyring> <fingerprint>: stop unless the keyring holds exactly this key.
+fpr_check() {
+  ((CHECK_ONLY)) && [[ ! -s "$1" ]] && return 0
+  local got
+  got="$(gpg --show-keys --with-colons "$1" 2>/dev/null | awk -F: '$1=="fpr"{print $10; exit}')"
+  [[ "$got" == "$2" ]] || die "$1: key fingerprint '${got:-none}' is not $2"
+}
+
+# Claude Desktop (Anthropic's apt repo; the package also writes this same list file).
+# Key and fingerprint: code.claude.com/docs/en/desktop-linux.
+key https://downloads.claude.ai/claude-desktop/key.asc /usr/share/keyrings/claude-desktop-archive-keyring.asc
+fpr_check /usr/share/keyrings/claude-desktop-archive-keyring.asc 31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE
+sudo_write /etc/apt/sources.list.d/claude-desktop.list \
+  "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main"
+
+# ChatGPT desktop app, with Codex (OpenAI's apt repo). OpenAI publishes no key URL. The key in
+# config/keys is the one the package's postinst installs, and it signs the repo's InRelease.
+# The sources text matches what the postinst writes, so the package keeps this file as it is.
+if [[ ! -s /usr/share/keyrings/chatgpt-archive-keyring.gpg ]]; then
+  run sudo install -D -m 644 "$REPO_DIR/config/keys/chatgpt-archive-keyring.gpg" /usr/share/keyrings/chatgpt-archive-keyring.gpg
+fi
+fpr_check /usr/share/keyrings/chatgpt-archive-keyring.gpg 3BFA0E4AE8B8CC16A2D9BA684A3B4A566C4660E4
+sudo_write /etc/apt/sources.list.d/chatgpt.sources "### THIS FILE IS AUTOMATICALLY CONFIGURED ###
+# Remove it to opt out of automatic package updates.
+X-Repolib-Name: ChatGPT
+Types: deb
+URIs: https://persistent.oaistatic.com/codex-app-prod/linux/deb
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /usr/share/keyrings/chatgpt-archive-keyring.gpg"
+
 # Infisical publishes only a setup script for its repo.
 [[ -f /etc/apt/sources.list.d/infisical-infisical-cli.list || -f /etc/apt/sources.list.d/infisical.list ]] ||
   run bash -c "curl -1sLf https://artifacts-cli.infisical.com/setup.deb.sh | sudo -E bash"
@@ -80,6 +112,11 @@ run sudo apt-get update
 
 # Firefox: replace the snap with the Mozilla .deb (profile stays in ~/.mozilla after first run).
 if snap list firefox >/dev/null 2>&1; then run sudo snap remove --purge firefox; fi
+# Ubuntu's stub package is versioned "1:1snap1-…"; its epoch makes Mozilla's real build look like a
+# downgrade, which apt-get -y refuses. Allow the downgrade for this one package only.
+if dpkg-query -W -f='${Version}' firefox 2>/dev/null | matches snap; then
+  run sudo apt-get install -y --allow-downgrades firefox
+fi
 
 APT_PKGS=(
   git rsync wget unzip build-essential cmake pkg-config shellcheck
@@ -87,8 +124,12 @@ APT_PKGS=(
   google-chrome-stable brave-browser code gh cloudflared firefox infisical
   obs-studio v4l2loopback-dkms mise
   flatpak gnome-software-plugin-flatpak
+  claude-desktop chatgpt
 )
 run sudo apt-get install -y "${APT_PKGS[@]}"
+
+# Claude Desktop's Cowork VM needs /dev/kvm and /dev/vhost-vsock (kvm group). Applies after a reboot.
+id -nG "$USER" | matches -w kvm || run sudo usermod -aG kvm "$USER"
 
 # Slack: official snap (auto-refreshes).
 snap list slack >/dev/null 2>&1 || run sudo snap install slack
@@ -106,10 +147,10 @@ fi
 
 cat <<'EOF'
 
-Manual installs (vendor .deb files; each adds its own apt repo or updates itself):
-  - Claude Desktop:  https://claude.ai/download          sudo apt install ./claude-desktop*.deb
-  - ChatGPT/Codex desktop app: https://chatgpt.com/download   sudo apt install ./<file>.deb
-  - Hubstaff:        https://app.hubstaff.com/download   (Linux installer; updates from the tray menu)
+Manual install (no apt repo; per-user, never with sudo):
+  - Hubstaff: https://hubstaff.com/download -> Linux .sh
+      sh ./Hubstaff-*.sh -- --silent --destination="$HOME/Hubstaff"
+    Rerunning a newer installer upgrades it in place; quit Hubstaff first.
 EOF
 mark_done
 log "done. Next: scripts/30-gpu.sh"

@@ -10,11 +10,11 @@ case "$K" in
 esac
 
 rc=0
-lsmod | grep -q '^mt7921e' && log "Wi-Fi driver mt7921e loaded" || { warn "mt7921e not loaded"; rc=1; }
-nmcli -t -f TYPE,STATE device 2>/dev/null | grep -q '^wifi:connected' && log "Wi-Fi connected" || warn "Wi-Fi not connected"
+lsmod | matches '^mt7921e' && log "Wi-Fi driver mt7921e loaded" || { warn "mt7921e not loaded"; rc=1; }
+nmcli -t -f TYPE,STATE device 2>/dev/null | matches '^wifi:connected' && log "Wi-Fi connected" || warn "Wi-Fi not connected"
 verify_tool bluetooth || rc=1
-bluetoothctl show 2>/dev/null | grep -q 'Powered: yes' && log "Bluetooth powered" || { warn "Bluetooth adapter not powered"; rc=1; }
-rfkill list 2>/dev/null | grep -q 'Soft blocked: yes' && warn "a radio is soft-blocked (rfkill unblock all)"
+bluetoothctl show 2>/dev/null | matches 'Powered: yes' && log "Bluetooth powered" || { warn "Bluetooth adapter not powered"; rc=1; }
+rfkill list 2>/dev/null | matches 'Soft blocked: yes' && warn "a radio is soft-blocked (rfkill unblock all)"
 
 if [[ " $* " == *" --hold "* ]]; then
   owner_sudo "$@"

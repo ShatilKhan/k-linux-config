@@ -56,14 +56,14 @@ ghw() { gh auth switch --hostname github.com --user $WORK_GH_USER; }"
 
 # gh logins need a browser; the owner runs them.
 for u in "$PERSONAL_GH_USER" "$WORK_GH_USER"; do
-  gh auth status --hostname github.com 2>&1 | grep -q "account $u" ||
+  gh auth status --hostname github.com 2>&1 | matches "account $u" ||
     echo "LOGIN-NEEDED gh $u:  gh auth login --hostname github.com --git-protocol ssh --skip-ssh-key --web"
 done
 
 # Checks
 ((CHECK_ONLY)) && exit 0
 rc=0
-ssh_user() { ssh -i "$HOME/.ssh/$1" -o IdentitiesOnly=yes -o BatchMode=yes -T git@github.com 2>&1 | sed -nE 's/^Hi ([^!]+)!.*/\1/p'; }
+ssh_user() { ssh -F /dev/null -i "$HOME/.ssh/$1" -o IdentitiesOnly=yes -o BatchMode=yes -T git@github.com 2>&1 | sed -nE 's/^Hi ([^!]+)!.*/\1/p'; }
 [[ "$(ssh_user "$PERSONAL_KEY")" == "$PERSONAL_GH_USER" ]] || { warn "personal SSH key does not authenticate as $PERSONAL_GH_USER"; rc=1; }
 [[ "$(ssh_user "$WORK_KEY")" == "$WORK_GH_USER" ]] || { warn "work SSH key does not authenticate as $WORK_GH_USER"; rc=1; }
 first_work_repo="$(read_list "$P/work-dirs.txt" | head -1)"; first_work_repo="${first_work_repo/#\~/$HOME}"

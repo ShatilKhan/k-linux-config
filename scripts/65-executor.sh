@@ -37,7 +37,7 @@ run systemctl --user restart executor.service
 if command -v claude >/dev/null && ! claude mcp get executor >/dev/null 2>&1; then
   run claude mcp add --transport http --scope user executor http://127.0.0.1:4312/mcp
 fi
-if command -v codex >/dev/null && ! codex mcp list 2>/dev/null | grep -q '^executor'; then
+if command -v codex >/dev/null && ! codex mcp list 2>/dev/null | matches '^executor'; then
   run codex mcp add executor --url http://127.0.0.1:4312/mcp
 fi
 
@@ -53,7 +53,7 @@ done
 log "Executor answers on :4312 (HTTP $code), RAM $(executor_ram)"
 systemctl --user is-active --quiet executor || die "executor user service is not active"
 command -v claude >/dev/null && { claude mcp get executor >/dev/null 2>&1 || die "executor MCP not registered in Claude Code"; }
-command -v codex >/dev/null && { codex mcp list 2>/dev/null | grep -q '^executor' || die "executor MCP not registered in Codex"; }
+command -v codex >/dev/null && { codex mcp list 2>/dev/null | matches '^executor' || die "executor MCP not registered in Codex"; }
 log "PASS executor service active and registered"
 # All MCP servers (copied config + executor): present, and connected or waiting for a login.
 "$REPO_DIR/scripts/verify-mcp.sh" || die "MCP servers missing or failing (see above)"

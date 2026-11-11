@@ -39,7 +39,6 @@ posthog-cli	posthog-cli	posthog-cli --version	any	-	-
 cf	cf	cf --version	any	-	-
 firefox-devtools-mcp	firefox-devtools-mcp	echo 0.0.0	any	-	-
 lstk	lstk	lstk --version	any	-	-
-vercel	vercel	vercel --version	any	-	-
 cocoindex-code	ccc	ccc --help	any	-	-
 hf	hf	hf version	any	-	-
 d2	d2	d2 --version	any	-	-

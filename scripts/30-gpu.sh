@@ -51,7 +51,9 @@ grep -q 'amdgpu.dcdebugmask=0x600' /proc/cmdline || { warn "amdgpu flag not acti
 grep -q 'UseKernelSuspendNotifiers: 1' /proc/driver/nvidia/params || { warn "UseKernelSuspendNotifiers is not 1 (reboot?)"; rc=1; }
 grep -q 'PreserveVideoMemoryAllocations: 1' /proc/driver/nvidia/params || { warn "PreserveVideoMemoryAllocations is not 1"; rc=1; }
 [[ "$(gsettings get org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type)" == "'nothing'" ]] || { warn "GNOME auto-suspend (AC) still on"; rc=1; }
-systemd-analyze cat-config systemd/logind.conf 2>/dev/null | grep -q '^HandleLidSwitch=lock' || { warn "logind lid setting not loaded"; rc=1; }
+systemd-analyze cat-config systemd/logind.conf 2>/dev/null | matches '^HandleLidSwitch=lock' || { warn "logind lid setting not loaded"; rc=1; }
 ((rc == 0)) && log "GPU and power checks PASS" || die "GPU and power checks failed (see above)"
-mark_done
+# The checks above only pass after the reboot, and the post-reboot step is `--check`
+# (AGENT.md). So a passing --check run counts as done here, unlike other scripts.
+CHECK_ONLY=0 mark_done
 log "Next: scripts/35-net-check.sh"

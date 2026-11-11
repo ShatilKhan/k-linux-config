@@ -79,8 +79,8 @@ set +f
 report ""; report "## Tools"; report "| status | tool | version | note |"; report "|---|---|---|---|"
 tools_ok=1
 while IFS=$'\t' read -r name _; do verify_tool "$name" || tools_ok=0; done < <(tail -n +2 "$TOOLS_TSV")
-[[ "$(sudo docker info -f '{{.DockerRootDir}}' 2>/dev/null)" == /home/docker ]] || { warn "Docker data-root is not /home/docker"; tools_ok=0; }
-systemctl show ollama -p Environment | grep -q "OLLAMA_MODELS=$HOME/dev/models" || { warn "Ollama models path"; tools_ok=0; }
+[[ "$(docker --context default info -f '{{.DockerRootDir}}' 2>/dev/null)" == /home/docker ]] || { warn "Docker data-root is not /home/docker"; tools_ok=0; }
+systemctl show ollama -p Environment | matches "OLLAMA_MODELS=$HOME/dev/models" || { warn "Ollama models path"; tools_ok=0; }
 dpkg -s claude-desktop >/dev/null 2>&1 || report "- MANUAL-NEEDED: claude-desktop"
 # Executor runs all day; revisit (on-demand start) if this goes above ~300 MB.
 report "- Executor RAM: $(executor_ram)"; log "Executor RAM: $(executor_ram)"
@@ -97,13 +97,12 @@ login() { local label="$1"; shift
     </dev/null >/dev/null 2>&1; then s=PASS; else s=LOGIN-NEEDED; fi
   printf '%-12s login %s\n' "$s" "$label"; report "- $s $label"; }
 login "railway" railway whoami
-login "vercel" vercel whoami
 login "aws" aws sts get-caller-identity
 login "codex" codex login status
 login "infisical" infisical user get token
 login "sentry-cli" sentry-cli info
 login "hubstaff" hubstaff users me
-gh auth status --hostname github.com 2>&1 | grep -c 'Logged in' | grep -q '^2$' && login "gh (2 accounts)" true || login "gh (2 accounts)" false
+gh auth status --hostname github.com 2>&1 | grep -c 'Logged in' | matches '^2$' && login "gh (2 accounts)" true || login "gh (2 accounts)" false
 
 # ---- Summary ----
 report ""

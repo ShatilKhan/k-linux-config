@@ -3,4 +3,5 @@
 	name = @WORK_NAME@
 	email = @WORK_EMAIL@
 [core]
-	sshCommand = ssh -i ~/.ssh/@WORK_KEY@ -o IdentitiesOnly=yes
+	# -F /dev/null: ~/.ssh/config pins the personal key for github.com, and the agent offers it first.
+	sshCommand = ssh -F /dev/null -i ~/.ssh/@WORK_KEY@ -o IdentitiesOnly=yes

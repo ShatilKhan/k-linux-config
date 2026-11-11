@@ -35,7 +35,7 @@ command -v claude >/dev/null && run claude plugin marketplace update || warn "pl
 
 # 6. herdsman skill (the binary comes from mise). The skill must match the binary's release.
 HS_VER="$(herdsman version 2>/dev/null | grep -oE 'v?[0-9]+(\.[0-9]+)+' | head -1 || true)"
-if ! gh skill list 2>/dev/null | grep -qw herdsman; then
+if ! gh skill list 2>/dev/null | matches -w herdsman; then
   if gh auth status >/dev/null 2>&1 && [[ -n "$HS_VER" ]]; then
     run gh skill install arafathusayn/herdsman herdsman --agent claude-code --scope user --pin "v${HS_VER#v}"
   else
@@ -59,7 +59,7 @@ if ((!CHECK_ONLY)); then
   left="$(count "$HOME/.agents/skills" "$HOME/.claude/skills" -mindepth 1 -maxdepth 1 \
     \( -name 'flutter-*' -o -name 'dart-*' -o -name 'playwright-cli' \))"
   [[ "$left" == 0 ]] && log "PASS removed skills are gone" || die "$left removed skills still present"
-  gh skill list 2>/dev/null | grep -qw herdsman && log "PASS herdsman skill installed" ||
+  gh skill list 2>/dev/null | matches -w herdsman && log "PASS herdsman skill installed" ||
     warn "herdsman skill not installed yet (needs gh login; see LOGIN-NEEDED above)"
   log "skills: $(count "$HOME/.claude/skills" -mindepth 1 -maxdepth 1) in ~/.claude/skills, $(count "$HOME/.agents/skills" -mindepth 1 -maxdepth 1) in ~/.agents/skills"
 fi

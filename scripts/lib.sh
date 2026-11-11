@@ -37,6 +37,11 @@ log()  { printf '\033[1m[%s]\033[0m %s\n' "$(basename "$0" .sh)" "$*"; }
 warn() { printf '\033[33m[%s] WARN:\033[0m %s\n' "$(basename "$0" .sh)" "$*" >&2; }
 die()  { printf '\033[31m[%s] FAIL:\033[0m %s\n' "$(basename "$0" .sh)" "$*" >&2; exit 1; }
 
+# cmd | matches [grep-flags] <pattern>: true when a line matches. Use it in place of `grep -q`
+# after a pipe. grep -q exits at the first match, the writer then gets SIGPIPE (141), and
+# pipefail turns a match into a failure (seen with `lsmod | grep -q`). This reads all input.
+matches() { grep "$@" >/dev/null; }
+
 # run <cmd...>: execute, or only print it in --check mode.
 run() { if ((CHECK_ONLY)); then log "would run: $*"; else "$@"; fi; }
 
@@ -125,7 +130,7 @@ mount_old() {
   # SELF_TEST=1 OLD_HOME=$HOME: dry-run the scripts on the old machine against itself.
   [[ "${SELF_TEST:-0}" == 1 ]] && return 0
   if findmnt -rn "$OLD_MNT" >/dev/null; then
-    findmnt -rno OPTIONS "$OLD_MNT" | grep -qw ro || die "$OLD_MNT is mounted read-write; unmount it first"
+    findmnt -rno OPTIONS "$OLD_MNT" | matches -w ro || die "$OLD_MNT is mounted read-write; unmount it first"
     return 0
   fi
   local dev="${OLD_DEV:-}"
@@ -168,7 +173,13 @@ verify_pkgs() {
 
 # copy_diffs <path>: files under <path> that are missing or older in $HOME than in $OLD_HOME.
 # -u: files changed on the new machine after the copy do not count.
+# Not counted: attribute-only changes (itemize "." lines, e.g. 15-secure's chmod), skills that
+# 60-agents moves aside (same patterns as there), and caches/backups that tools rewrite.
+DIFF_IGNORE=(--exclude='/.agents/skills/flutter-*' --exclude='/.agents/skills/dart-*'
+  --exclude='/.claude/skills/flutter-*' --exclude='/.claude/skills/dart-*' --exclude='/.claude/skills/playwright-cli'
+  --exclude=/.claude/plugins/marketplaces/ --exclude=/.claude/backups/ --exclude=/.claude/session-env/
+  --exclude=/.codex/tmp/)
 copy_diffs() {
-  rsync "${RSYNC_OPTS[@]}" -nu --checksum --itemize-changes "${ALWAYS_SKIP[@]}" \
-    --exclude-from="$LISTS/skip-list.txt" "$OLD_HOME/./$1" "$HOME/" | grep -vE '^\.d' | grep -c . || true
+  rsync "${RSYNC_OPTS[@]}" -nu --checksum --itemize-changes "${ALWAYS_SKIP[@]}" "${DIFF_IGNORE[@]}" \
+    --exclude-from="$LISTS/skip-list.txt" "$OLD_HOME/./$1" "$HOME/" | grep -vE '^\.' | grep -c . || true
 }
