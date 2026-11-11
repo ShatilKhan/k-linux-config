@@ -3,6 +3,7 @@
 # vendor apt repos and the Ubuntu archive (apt upgrade), snap (snap refresh),
 # Flathub (flatpak update). See docs/decisions.md.
 source "$(dirname "$0")/lib.sh"
+owner_sudo "$@"
 need_ubuntu_2604
 
 # key <url> <keyring-path> [dearmor]

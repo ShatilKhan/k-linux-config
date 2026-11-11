@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Check that this machine matches what the other scripts expect. Changes nothing.
 source "$(dirname "$0")/lib.sh"
+owner_sudo "$@"
 rc=0
 need_ubuntu_2604 && log "Ubuntu 26.04 OK"
 [[ "$USER" == k ]] || { warn "user is '$USER'; Claude session paths need user 'k' (/home/k/...)"; rc=1; }

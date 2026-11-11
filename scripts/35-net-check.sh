@@ -17,6 +17,7 @@ bluetoothctl show 2>/dev/null | grep -q 'Powered: yes' && log "Bluetooth powered
 rfkill list 2>/dev/null | grep -q 'Soft blocked: yes' && warn "a radio is soft-blocked (rfkill unblock all)"
 
 if [[ " $* " == *" --hold "* ]]; then
+  owner_sudo "$@"
   run sudo apt-mark hold "linux-image-$K" "linux-modules-$K" "linux-modules-extra-$K" 2>/dev/null || true
   log "held kernel $K. Undo later with: sudo apt-mark unhold linux-image-$K linux-modules-$K"
 fi

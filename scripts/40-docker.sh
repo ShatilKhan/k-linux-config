@@ -7,6 +7,7 @@
 # --desktop-settings   apply memory/CPU/swap/disk limits to Docker Desktop (run after
 #                      Desktop has started once; it quits and restarts Desktop).
 source "$(dirname "$0")/lib.sh"
+owner_sudo "$@"
 need_ubuntu_2604
 CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 

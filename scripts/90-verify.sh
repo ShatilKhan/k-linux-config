@@ -4,6 +4,7 @@
 # Compares the new /home against the old one (mounted read-only): files, git repos,
 # worktrees, Claude state; then re-checks every tool, MCP server, plugin and login.
 source "$(dirname "$0")/lib.sh"
+owner_sudo "$@"
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
 mount_old
 COPY="$LISTS/copy-list.txt"; SKIP="$LISTS/skip-list.txt"

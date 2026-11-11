@@ -2,6 +2,7 @@
 # Runtimes and CLIs through mise (replaces nvm and sdkman), plus tools with their own
 # official installers: aws, ollama, xhisper.
 source "$(dirname "$0")/lib.sh"
+owner_sudo "$@"
 CFG="$REPO_DIR/config"
 command -v mise >/dev/null || die "mise missing; run scripts/20-apps.sh first"
 

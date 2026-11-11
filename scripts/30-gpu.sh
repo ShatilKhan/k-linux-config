@@ -3,6 +3,7 @@
 # Goal: no freezes. The laptop never suspends; closing the lid locks the screen.
 # Reboot after the first run, then run again with --check.
 source "$(dirname "$0")/lib.sh"
+owner_sudo "$@"
 need_ubuntu_2604
 CFG="$REPO_DIR/config"
 

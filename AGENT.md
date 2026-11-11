@@ -6,6 +6,9 @@ and `15-secure` before starting you.
 
 ## Where to start
 
+0. If `~/.config/k-migration/EVENTS.md` exists, read its last entries first. It is the owner's
+   private log of every decision made while planning this setup. Never copy its contents into
+   this repo.
 1. List `~/.local/state/k-setup/`. A `<script>.done` file means that script passed all its checks.
    A `<script>.log` file holds the output of its last run, including runs the owner made in
    another terminal.
@@ -22,6 +25,8 @@ and `15-secure` before starting you.
   2. Ask the owner to run it in a terminal: `cd ~/k-linux-config && scripts/NN-name.sh`.
   3. When the owner says it finished, read `~/.local/state/k-setup/NN-name.log` and check for
      `NN-name.done`. On a FAIL, find the cause, fix it, and ask for a rerun.
+- If you run one of these without a terminal, it stops before any change with exit code 3 and
+  prints `OWNER-RUN:` plus the exact command. That is not a failure: give the owner the command.
 - Scripts with no sudo: `60-agents`, `65-executor`, `70-git`. Run these yourself.
 - Any other command that needs sudo: give the owner the exact command to run.
 

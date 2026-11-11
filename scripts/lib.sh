@@ -14,6 +14,18 @@ STATE_DIR="$HOME/.local/state/k-setup"
 mkdir -p "$STATE_DIR"
 exec > >(tee -a "$STATE_DIR/$(basename "$0" .sh).log") 2>&1
 
+# owner_sudo: stop before any change when sudo cannot ask for a password (no terminal,
+# for example an agent's Bash tool). The owner then runs the script in a terminal.
+owner_sudo() {
+  ((CHECK_ONLY)) && return 0
+  [[ "${SELF_TEST:-0}" == 1 ]] && return 0
+  [[ -t 0 ]] && return 0
+  sudo -n true 2>/dev/null && return 0
+  printf 'OWNER-RUN: this step needs sudo. Run it in a terminal:\n  cd %s && scripts/%s %s\n' \
+    "$REPO_DIR" "$(basename "$0")" "${*:-}"
+  exit 3
+}
+
 # mark_done: record that this script finished with all checks passing (not in --check mode).
 mark_done() {
   ((CHECK_ONLY)) && return 0

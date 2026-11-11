@@ -5,6 +5,7 @@
 #   $LISTS/skip-list.txt   rsync exclude patterns, anchored with a leading /
 # Usage: scripts/10-migrate.sh [--check]     (OLD_DEV=/dev/... to skip auto-detect)
 source "$(dirname "$0")/lib.sh"
+owner_sudo "$@"
 
 [[ "$(id -u)" -ne 0 ]] || die "run as the normal user, not root"
 mount_old
