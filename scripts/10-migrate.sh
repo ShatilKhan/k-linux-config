@@ -38,25 +38,32 @@ run mkdir -p "$HOME/dev/models"   # Ollama models live here, not on /
 
 # Leftover report: entries in the old home that the lists do not mention. It checks the
 # top level, and inside every parent of a nested list entry (for example .config, .local/bin).
+# Byte order (LC_ALL=C) for sort and comm: on 26.04 the locale-aware sort and uutils comm
+# disagree on names like .config/x vs Desktop, and comm then exits 1 ("not in sorted order").
 LEFT="$HOME/migrate-leftovers.txt"
-listed="$( { read_list "$COPY"; read_list "$SKIP" | sed 's#^/##; s#/$##'; } | sort -u)"
-# every ancestor of a nested entry (a, a/b for a/b/c) gets expanded one level
-# (ancestors that are listed themselves, like dev for dev/<skipped>, are already covered)
-parents="$(comm -23 \
-  <(printf '%s\n' "$listed" | awk -F/ 'NF>1{p=$1; print p; for(i=2;i<NF;i++){p=p"/"$i; print p}}' | sort -u) \
-  <(printf '%s\n' "$listed"))"
-{
-  echo "# Entries in the old home that were not copied and not in skip-list."
-  echo "# Review before deleting the old partition."
-  for dir in . $parents; do
-    while IFS= read -r e; do
-      if [[ "$dir" == . ]]; then rel="$e"; else rel="$dir/$e"; fi
-      grep -qxF "$rel" <<<"$listed" && continue    # copied or skipped
-      grep -qxF "$rel" <<<"$parents" && continue   # expanded separately
-      echo "$rel"
-    done < <(cd "$OLD_HOME/$dir" 2>/dev/null && find . -mindepth 1 -maxdepth 1 -printf '%P\n' | sort)
-  done
-} >"$LEFT"
-log "leftover report: $LEFT ($(($(wc -l <"$LEFT") - 2)) entries)"
+leftover_report() {
+  local listed parents dir e rel
+  listed="$( { read_list "$COPY"; read_list "$SKIP" | sed 's#^/##; s#/$##'; } | LC_ALL=C sort -u)" || return 1
+  # every ancestor of a nested entry (a, a/b for a/b/c) gets expanded one level
+  # (ancestors that are listed themselves, like dev for dev/<skipped>, are already covered)
+  parents="$(LC_ALL=C comm -23 \
+    <(printf '%s\n' "$listed" | awk -F/ 'NF>1{p=$1; print p; for(i=2;i<NF;i++){p=p"/"$i; print p}}' | LC_ALL=C sort -u) \
+    <(printf '%s\n' "$listed"))" || return 1
+  {
+    echo "# Entries in the old home that were not copied and not in skip-list."
+    echo "# Review before deleting the old partition."
+    for dir in . $parents; do
+      while IFS= read -r e; do
+        if [[ "$dir" == . ]]; then rel="$e"; else rel="$dir/$e"; fi
+        grep -qxF "$rel" <<<"$listed" && continue    # copied or skipped
+        grep -qxF "$rel" <<<"$parents" && continue   # expanded separately
+        echo "$rel"
+      done < <(cd "$OLD_HOME/$dir" 2>/dev/null && find . -mindepth 1 -maxdepth 1 -printf '%P\n' | LC_ALL=C sort)
+    done
+  } >"$LEFT"
+  log "leftover report: $LEFT ($(($(wc -l <"$LEFT") - 2)) entries)"
+}
+# The report only helps review; the copy and its checks above are what count.
+leftover_report || warn "leftover report failed; the copy itself passed its checks"
 mark_done
 log "done. Next: scripts/15-secure.sh"
