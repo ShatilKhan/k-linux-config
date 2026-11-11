@@ -19,6 +19,8 @@ if ! swapon --show=SIZE --bytes --noheadings | awk '{t+=$1} END{exit !(t>=15*102
   fi
 fi
 curl -fsS -o /dev/null https://github.com && log "internet OK" || { warn "no internet"; rc=1; }
+# Rust coreutils (uutils) can differ from GNU between versions; catch it before any copy.
+"$REPO_DIR/scripts/coreutils-check.sh" || { warn "a coreutils form these scripts use behaves differently here"; rc=1; }
 dev="$(find_old_home || true)"
 [[ -n "$dev" ]] && log "old home partition found: $dev" || { warn "old home partition not found (needed by 10-migrate.sh)"; rc=1; }
 ((rc == 0)) || die "preflight failed"

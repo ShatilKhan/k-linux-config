@@ -41,7 +41,7 @@ die()  { printf '\033[31m[%s] FAIL:\033[0m %s\n' "$(basename "$0" .sh)" "$*" >&2
 run() { if ((CHECK_ONLY)); then log "would run: $*"; else "$@"; fi; }
 
 # ver_ge A B: true when version A >= version B.
-ver_ge() { [[ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -1)" == "$2" ]]; }
+ver_ge() { [[ "$(printf '%s\n%s\n' "$1" "$2" | LC_ALL=C sort -V | head -1)" == "$2" ]]; }
 
 # first x.y[.z] number in a string
 ver_of() { grep -oE '[0-9]+(\.[0-9]+)+' <<<"$1" | head -1 || true; }
