@@ -50,8 +50,13 @@
 - Executor (local CLI mode, `scripts/65-executor.sh`) is the one login for many services. You connect each account once in its dashboard. Agents use one MCP endpoint (`http://127.0.0.1:4312/mcp`) and never see the credentials.
   - Its keys are in the GNOME keyring, so the Executor setup is redone on each machine, not copied.
   - The existing MCP entries stay until each service works through Executor. Then the old entry is removed, so no tool appears twice.
-  - Slack stays on the Slack plugin, because Executor does not support Slack's own MCP server. Two Slack workspaces may need one Slack MCP entry per project folder.
+  - Slack stays on the Slack plugin. Executor's Slack connector is not tested yet. Two Slack workspaces may need one Slack MCP entry per project folder.
   - Executor's support for the OAuth flow of remote MCP servers (custom app by URL) is not confirmed in its docs. Test each service before removing its old entry.
+  - A systemd user unit runs `executor serve` at login (no browser) and restarts it if it fails. `90-verify.sh` prints its RAM. If it uses more than about 300 MB, change to an on-demand start.
+  - Executor 2 has no CLI commands that call tools (version 1's `call` and `tools` were removed). Agents use its MCP endpoint.
+  - To connect an account without the dashboard, ask an agent. It calls `appAccounts.userConnect` and gives you a sign-in link.
+- Some MCP servers use a fixed token in an `Authorization` header instead of OAuth (used where OAuth failed). The header is in `~/.claude.json`, so it comes over with the copy. No new token is needed unless the old one is revoked.
+- Hubstaff CLI: `hubstaff config set-pat` trades the access token for a refresh token that rotates. Two machines that share one saved login break each other, so each machine gets its own token.
 - claude.ai connectors also go with the Claude account to every machine.
 - Local stdio servers and CLIs need one login on each machine.
 - IBM ContextForge was evaluated and not used. You must run and patch your own server. It had several CVEs in 2026. It still needs one login for each upstream service.

@@ -123,3 +123,9 @@ ALWAYS_SKIP=(--exclude=/.claude/.credentials.json --exclude=/.codex/auth.json)
 
 # count <find args...>: number of matches; 0 (not an error) when the path is missing.
 count() { { find "$@" 2>/dev/null || true; } | wc -l; }
+
+# executor_ram: memory of the executor user service in MB ("?" when not running).
+executor_ram() {
+  local b; b="$(systemctl --user show executor -p MemoryCurrent --value 2>/dev/null || true)"
+  [[ "$b" =~ ^[0-9]+$ ]] && echo "$((b / 1024 / 1024)) MB" || echo "?"
+}

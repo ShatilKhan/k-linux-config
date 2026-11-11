@@ -23,4 +23,5 @@ rust = "stable"
 opencode = "latest"
 herdr = "latest"                          # agent terminal workspace
 "github:arafathusayn/herdsman" = "latest"  # agent-team orchestrator on top of herdr; keep its skill on the same release
+"github:NetsoftHoldings/hubstaff-cli" = "latest"  # `hubstaff` CLI (Hubstaff Public API v2)
 

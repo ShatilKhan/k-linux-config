@@ -35,7 +35,7 @@ command -v claude >/dev/null && run claude plugin marketplace update || warn "pl
 
 # 6. herdsman skill (the binary comes from mise). The skill must match the binary's release.
 HS_VER="$(herdsman version 2>/dev/null | grep -oE 'v?[0-9]+(\.[0-9]+)+' | head -1 || true)"
-if [[ ! -d "$HOME/.claude/skills/herdsman" ]]; then
+if ! gh skill list 2>/dev/null | grep -qw herdsman; then
   if gh auth status >/dev/null 2>&1 && [[ -n "$HS_VER" ]]; then
     run gh skill install arafathusayn/herdsman herdsman --agent claude-code --scope user --pin "v${HS_VER#v}"
   else

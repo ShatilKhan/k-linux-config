@@ -33,6 +33,9 @@ and cloned this repo to `~/k-linux-config`.
 - After `65-executor.sh`: the owner connects accounts in the Executor dashboard (`executor`).
   Remove an old MCP entry only after the owner confirms that service works through Executor.
 - After `70-git.sh`: install the herdsman skill if `60-agents.sh` printed LOGIN-NEEDED for it.
+- Hubstaff CLI: the owner creates a NEW personal access token at developer.hubstaff.com and puts it in
+  `~/.env` as `HUBSTAFF_PERSONAL_ACCESS_TOKEN`. Then run, without printing the token:
+  `TOK=$(grep -E '^(export )?HUBSTAFF_PERSONAL_ACCESS_TOKEN=' ~/.env | tail -1 | cut -d= -f2-); hubstaff config set-pat "$TOK" >/dev/null`
 
 ## Finish
 
