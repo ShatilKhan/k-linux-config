@@ -19,9 +19,13 @@ while read -r p; do
   log "copy $p"
   rsync "${RSYNC_OPTS[@]}" "${DRY[@]}" "${ALWAYS_SKIP[@]}" --exclude-from="$SKIP" \
     "$OLD_HOME/./$p" "$HOME/"
+  if ((!CHECK_ONLY)); then  # check this path right after copying it
+    d="$(copy_diffs "$p")"
+    [[ "$d" == 0 ]] && log "PASS copy $p" || die "copy of $p has $d differences; run this script again"
+  fi
   n=$((n + 1))
 done < <(read_list "$COPY")
-log "copied $n paths"
+log "copied and checked $n paths"
 
 # Old shell dotfiles go to ~/old-dotfiles for manual merge; the scripts write fresh ones.
 run mkdir -p "$HOME/old-dotfiles"

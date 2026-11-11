@@ -60,7 +60,7 @@ fi
 
 # Checks
 ((CHECK_ONLY)) || verify_rows mise node npm bun python uv rustc cargo ctx7 posthog-cli cf \
-  firefox-devtools-mcp lstk vercel cocoindex-code hf d2 sentry-cli railway opencode aws ollama xhisper
+  firefox-devtools-mcp lstk vercel cocoindex-code hf d2 sentry-cli railway opencode aws ollama xhisper herdr herdsman hubstaff
 if ((!CHECK_ONLY)); then
   systemctl show ollama -p Environment | grep -q "OLLAMA_MODELS=$HOME/dev/models" || die "ollama models path not set"
 fi

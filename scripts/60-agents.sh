@@ -54,4 +54,13 @@ if [[ -f "$HOME/.claude/settings.json" ]]; then
   done < <(jq -r '.enabledPlugins // {} | to_entries[] | select(.value) | .key' "$HOME/.claude/settings.json")
   ((miss)) && warn "install missing plugins inside Claude with /plugin" || log "all enabled plugins present"
 fi
+if ((!CHECK_ONLY)); then
+  # Skills: removed ones are gone, herdsman is installed (or waits for the gh login).
+  left="$(count "$HOME/.agents/skills" "$HOME/.claude/skills" -mindepth 1 -maxdepth 1 \
+    \( -name 'flutter-*' -o -name 'dart-*' -o -name 'playwright-cli' \))"
+  [[ "$left" == 0 ]] && log "PASS removed skills are gone" || die "$left removed skills still present"
+  gh skill list 2>/dev/null | grep -qw herdsman && log "PASS herdsman skill installed" ||
+    warn "herdsman skill not installed yet (needs gh login; see LOGIN-NEEDED above)"
+  log "skills: $(count "$HOME/.claude/skills" -mindepth 1 -maxdepth 1) in ~/.claude/skills, $(count "$HOME/.agents/skills" -mindepth 1 -maxdepth 1) in ~/.agents/skills"
+fi
 log "Next: scripts/65-executor.sh"

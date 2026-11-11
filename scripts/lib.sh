@@ -129,3 +129,21 @@ executor_ram() {
   local b; b="$(systemctl --user show executor -p MemoryCurrent --value 2>/dev/null || true)"
   [[ "$b" =~ ^[0-9]+$ ]] && echo "$((b / 1024 / 1024)) MB" || echo "?"
 }
+
+# verify_pkgs <deb...>: every apt package must be installed. Prints PASS/FAIL per package.
+verify_pkgs() {
+  local p rc=0
+  for p in "$@"; do
+    if [[ "$(dpkg-query -W -f '${db:Status-Status}' "$p" 2>/dev/null)" == installed ]]; then
+      printf 'PASS apt  %s\n' "$p"; report "| PASS | apt $p | | |"
+    else printf 'FAIL apt  %s not installed\n' "$p"; report "| FAIL | apt $p | | not installed |"; rc=1; fi
+  done
+  return $rc
+}
+
+# copy_diffs <path>: files under <path> that are missing or older in $HOME than in $OLD_HOME.
+# -u: files changed on the new machine after the copy do not count.
+copy_diffs() {
+  rsync "${RSYNC_OPTS[@]}" -nu --checksum --itemize-changes "${ALWAYS_SKIP[@]}" \
+    --exclude-from="$LISTS/skip-list.txt" "$OLD_HOME/./$1" "$HOME/" | grep -vE '^\.d' | grep -c . || true
+}

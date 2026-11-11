@@ -80,12 +80,14 @@ run sudo apt-get update
 # Firefox: replace the snap with the Mozilla .deb (profile stays in ~/.mozilla after first run).
 if snap list firefox >/dev/null 2>&1; then run sudo snap remove --purge firefox; fi
 
-run sudo apt-get install -y \
-  git rsync wget unzip build-essential cmake pkg-config shellcheck \
-  jq ripgrep ffmpeg pipewire vlc mycli postgresql-client \
-  google-chrome-stable brave-browser code gh cloudflared firefox infisical \
-  obs-studio v4l2loopback-dkms mise \
+APT_PKGS=(
+  git rsync wget unzip build-essential cmake pkg-config shellcheck
+  jq ripgrep ffmpeg pipewire vlc mycli postgresql-client
+  google-chrome-stable brave-browser code gh cloudflared firefox infisical
+  obs-studio v4l2loopback-dkms mise
   flatpak gnome-software-plugin-flatpak
+)
+run sudo apt-get install -y "${APT_PKGS[@]}"
 
 # Slack: official snap (auto-refreshes).
 snap list slack >/dev/null 2>&1 || run sudo snap install slack
@@ -96,6 +98,7 @@ run flatpak install --user -y flathub md.obsidian.Obsidian
 run flatpak override --user --filesystem=home md.obsidian.Obsidian
 
 if ((!CHECK_ONLY)); then
+  verify_pkgs "${APT_PKGS[@]}"
   verify_rows git curl jq ripgrep ffmpeg gcc make psql mycli google-chrome brave firefox vscode \
     vlc obs slack obsidian gh infisical cloudflared mise
 fi

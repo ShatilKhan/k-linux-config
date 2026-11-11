@@ -51,6 +51,12 @@ for _ in $(seq 20); do
 done
 [[ "$code" != 000 ]] || die "Executor is not listening on 127.0.0.1:4312"
 log "Executor answers on :4312 (HTTP $code), RAM $(executor_ram)"
+systemctl --user is-active --quiet executor || die "executor user service is not active"
+command -v claude >/dev/null && { claude mcp get executor >/dev/null 2>&1 || die "executor MCP not registered in Claude Code"; }
+command -v codex >/dev/null && { codex mcp list 2>/dev/null | grep -q '^executor' || die "executor MCP not registered in Codex"; }
+log "PASS executor service active and registered"
+# All MCP servers (copied config + executor): present, and connected or waiting for a login.
+"$REPO_DIR/scripts/verify-mcp.sh" || die "MCP servers missing or failing (see above)"
 cat <<'TXT'
 Next steps for you:
   1. Connect each account once: run `executor` (dashboard), or ask an agent to connect it

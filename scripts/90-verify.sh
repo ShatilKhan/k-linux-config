@@ -16,8 +16,7 @@ report ""; report "## Files"; report "| path | old files | new files | differenc
 while read -r p; do
   [[ -e "$OLD_HOME/$p" ]] || continue
   # -u: files changed on the new machine after the copy are not differences.
-  diffs="$(rsync "${RSYNC_OPTS[@]}" -nu --checksum --itemize-changes "${ALWAYS_SKIP[@]}" \
-    --exclude-from="$SKIP" "$OLD_HOME/./$p" "$HOME/" | grep -vE '^\.d' | grep -c . || true)"
+  diffs="$(copy_diffs "$p")"
   o="$(count "$OLD_HOME/$p" -type f)"; n="$(count "$HOME/$p" -type f)"
   # skip-list entries inside this path lower the expected count, so compare differences only
   report "| $p | $o | $n | $diffs |"
